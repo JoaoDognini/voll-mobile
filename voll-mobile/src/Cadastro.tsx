@@ -1,26 +1,66 @@
 
 
 import Logo from './assets/Logo.png';
-import { Box, Checkbox, Image, ScrollView, Text } from 'native-base';
+import { Box, Checkbox, Image, ScrollView, Text, useToast } from 'native-base';
 import { Titulo } from './components/Titulo';
 import Botao from './components/Botao';
 import { InputTexto } from './components/InputTexto';
 import { useState } from 'react';
 import { secoes } from './utils/CadastroTextos';
+import { cadastrarPaciente } from './services/PacienteServico';
 
-export default function Cadastro() {
+export default function Cadastro({ navigation }: any) {
 	const [numSecao, setNumSecao] = useState(0);
-
-	const senha = (label: string) => {
-		return label.toLowerCase() === 'senha' ? true : false;
-	}
+	const [dados, setDados] = useState({} as any);
+	const [planos, setPlanos] = useState([] as number[]);
+	const toast = useToast();
 
 	function avancarSecao() {
-		if (numSecao < secoes.length - 1) setNumSecao(numSecao + 1);
-	}
+		numSecao < secoes.length - 1 ? setNumSecao(numSecao + 1) : cadastrar()
+	};
 
 	function voltarSecao() {
 		if (numSecao > 0) setNumSecao(numSecao - 1);
+	}
+
+	function atualizarDados(id: string, valor: string) {
+		setDados({ ...dados, [id]: valor })
+	}
+
+	async function cadastrar() {
+		const resultado = await cadastrarPaciente({
+			cpf: dados.cpf,
+			nome: dados.nome,
+			email: dados.email,
+			endereco: {
+				cep: dados.cep,
+				rua: dados.rua,
+				numero: dados.numero,
+				estado: dados.estado,
+				complemento: dados.complemento
+			},
+			senha: dados.senha,
+			telefone: dados.telefone,
+			possuiPlanoSaude: planos.length > 0,
+			planosSaude: planos,
+			imagem: dados.imagem
+		})
+
+		if (resultado) {
+			toast.show({
+				title: 'Cadastro realizado com sucesso',
+				description: 'Você já pode fazer login',
+				backgroundColor: 'green.500',
+			})
+			navigation.replace('Login');
+		}
+		else {
+			toast.show({
+				title: 'Erro ao cadastrar',
+				description: 'Verifique os dados e tente novamente',
+				backgroundColor: 'red.500',
+			})
+		}
 	}
 
 	return (
@@ -36,7 +76,9 @@ export default function Cadastro() {
 						placeholder={input.placeholder}
 						label={input.label}
 						key={input.id}
-						secureTextEntry={senha(input.label)}
+						secureTextEntry={input.secureTextEntry}
+						value={dados[input.name]}
+						onChangeText={(valor) => atualizarDados(input.name, valor)}
 					/>
 				)}
 			</Box>
@@ -53,11 +95,23 @@ export default function Cadastro() {
 					<Checkbox
 						key={checkbox.id}
 						value={checkbox.plano}
-					>{checkbox.plano}</Checkbox>
+						isChecked={planos.includes(checkbox.id)}
+						onChange={() => {
+							setPlanos((planosAnteriores) => {
+								console.log(checkbox.id, checkbox.plano)
+								if (planosAnteriores.includes(checkbox.id)) {
+									return planosAnteriores.filter((id) => id !== checkbox.id)
+								}
+								return [...planosAnteriores, checkbox.id]
+							})
+						}}
+					>
+						{checkbox.plano}
+					</Checkbox>
 				)}
 			</Box>}
 			{numSecao > 0 && <Botao onPress={() => voltarSecao()} bgColor='gray.400'>Voltar</Botao>}
-			<Botao onPress={() => avancarSecao()} mt={4} mb={20}>Avançar</Botao>
+			<Botao onPress={() => avancarSecao()} mt={4} mb={20}>{numSecao !== 2 ? 'Avançar' : 'Finalizar'}</Botao>
 		</ScrollView>
 	);
 }
