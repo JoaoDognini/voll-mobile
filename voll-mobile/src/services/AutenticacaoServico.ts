@@ -6,10 +6,8 @@ export async function login(email: string, senha: string) {
 		const resultado = await api.post('/auth/login', {
 			email, senha
 		})
-		console.log(resultado)
 		return resultado.data
 	} catch (error) {
-		console.log(error)
 		return null;
 	}
 }

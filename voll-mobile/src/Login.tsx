@@ -18,7 +18,6 @@ export default function Login({ navigation }: any) {
 	const toast = useToast();
 
 	useEffect(() => {
-		AsyncStorage.removeItem('token');
 		async function verificaLogin() {
 			const token = await AsyncStorage.getItem('token');
 			if (token) {
@@ -39,7 +38,6 @@ export default function Login({ navigation }: any) {
 
 			AsyncStorage.setItem('token', token)
 			AsyncStorage.setItem('pacienteId', pacienteId)
-
 
 			navigation.replace('Tabs')
 		} else {

@@ -98,7 +98,6 @@ export default function Cadastro({ navigation }: any) {
 						isChecked={planos.includes(checkbox.id)}
 						onChange={() => {
 							setPlanos((planosAnteriores) => {
-								console.log(checkbox.id, checkbox.plano)
 								if (planosAnteriores.includes(checkbox.id)) {
 									return planosAnteriores.filter((id) => id !== checkbox.id)
 								}

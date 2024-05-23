@@ -10,9 +10,10 @@ interface CardConsultaProps {
 	data?: string;
 	foiAtendido?: boolean;
 	foiAgendado?: boolean;
+	onPress?: () => void;
 }
 
-export function CardConsulta({ nome, foto, especialidade, data, foiAtendido, foiAgendado }: CardConsultaProps) {
+export function CardConsulta({ nome, foto, especialidade, data, foiAtendido, foiAgendado, onPress }: CardConsultaProps) {
 	return (
 		<VStack w='100%' p={5} borderRadius='lg' shadow='2' bg={foiAtendido ? 'blue.100' : 'white'} mb={5}>
 			<VStack flexDir='row'>
@@ -26,7 +27,7 @@ export function CardConsulta({ nome, foto, especialidade, data, foiAtendido, foi
 					<Text>{data}</Text>
 				</VStack>
 			</VStack>
-			<Botao mt={3}>{foiAgendado ? 'Cancelar' : 'Agendar consulta'}</Botao>
+			<Botao mt={3} onPress={onPress}>{foiAgendado ? 'Cancelar' : 'Agendar consulta'}</Botao>
 		</VStack>
 	)
 }

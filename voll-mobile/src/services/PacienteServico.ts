@@ -6,12 +6,26 @@ export async function cadastrarPaciente(paciente: Paciente) {
 
 	try {
 		const resultado = await api.post('/paciente', paciente)
-		console.log(resultado.data)
 		return resultado.data
-	}
-	catch (error) {
-		console.log(error)
+	} catch (error) {
 		return null
 	}
+}
 
+export async function buscarPaciente(id: string) {
+	try {
+		const resultado = await api.get(`/paciente/${id}`)
+		return resultado.data
+	} catch (error) {
+		return null
+	}
+}
+
+export async function buscarConsultasPaciente(id: string) {
+	try {
+		const resultado = await api.get(`/paciente/${id}/consultas`)
+		return resultado.data
+	} catch (error) {
+		return null
+	}
 }
